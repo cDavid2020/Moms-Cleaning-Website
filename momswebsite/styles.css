@@ -1,0 +1,814 @@
+/* ==========================================================
+   [Company Name] — fluid, responsive, adaptive stylesheet
+   Strategy:
+   - FLUID: clamp() for all type, spacing, section rhythm
+   - RESPONSIVE: auto-fit grids that reflow at any width
+   - ADAPTIVE: hover/touch, reduced-motion, notch safe areas,
+     landscape phones, small-height screens
+   ========================================================== */
+
+:root {
+    --bg: #faf8f5;
+    --bg-alt: #efece7;
+    --ink: #2b2b28;
+    --ink-soft: #6e6a63;
+    --accent: #7c8a74;
+    --accent-dk: #68755f;
+    --line: #ddd8d0;
+
+    --serif: "Cormorant Garamond", Georgia, serif;
+    --sans: "Inter", -apple-system, "Segoe UI", sans-serif;
+
+    /* Fluid type scale — scales continuously between 320px and 1440px */
+    --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+    --fs-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+    --fs-label: clamp(0.6875rem, 0.66rem + 0.15vw, 0.75rem);
+    --fs-h1: clamp(2.1rem, 1.2rem + 4.5vw, 4.2rem);
+    --fs-h2: clamp(1.7rem, 1.15rem + 2.7vw, 2.9rem);
+    --fs-h3: clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem);
+    --fs-stat: clamp(2.4rem, 1.7rem + 3vw, 3.6rem);
+    --fs-quote: clamp(1.15rem, 1rem + 0.9vw, 1.4rem);
+    --fs-guarantee: clamp(1.45rem, 1rem + 2.3vw, 2.5rem);
+
+    /* Fluid spacing scale */
+    --space-xs: clamp(0.5rem, 0.4rem + 0.3vw, 0.75rem);
+    --space-s: clamp(1rem, 0.8rem + 0.6vw, 1.5rem);
+    --space-m: clamp(1.75rem, 1.3rem + 1.5vw, 3rem);
+    --space-l: clamp(2.75rem, 2rem + 2.5vw, 4.5rem);
+    /* Tightened: was clamp(4.5rem, 3rem + 7.5vw, 9.5rem) — roughly halved
+     so sections sit closer together throughout the page */
+    --pad-section: clamp(2.5rem, 1.75rem + 3.5vw, 4.75rem);
+
+    /* Fluid gutters + safe areas for notched devices */
+    --gutter: clamp(1.25rem, 4vw, 2.5rem);
+    --safe-l: env(safe-area-inset-left, 0px);
+    --safe-r: env(safe-area-inset-right, 0px);
+
+    --maxw: 1200px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--sans);
+    font-size: var(--fs-body);
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+a {
+    color: var(--accent-dk);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+/* Hover effects only on devices that actually hover — on touch,
+   hover states cause sticky highlight bugs */
+@media (hover: hover) and (pointer: fine) {
+    a:hover {
+        color: var(--ink);
+    }
+}
+
+.container {
+    max-width: var(--maxw);
+    margin-inline: auto;
+    padding-inline: calc(var(--gutter) + var(--safe-l))
+        calc(var(--gutter) + var(--safe-r));
+}
+.container.narrow {
+    max-width: 820px;
+}
+
+h1,
+h2,
+h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    text-wrap: balance; /* prevents orphan words in headlines; ignored by older browsers */
+}
+h1 {
+    font-size: var(--fs-h1);
+}
+h2 {
+    font-size: var(--fs-h2);
+    margin-bottom: var(--space-l);
+}
+h3 {
+    font-size: var(--fs-h3);
+    margin-bottom: var(--space-xs);
+}
+
+p {
+    max-width: 65ch;
+} /* readable line length at every viewport */
+
+.section {
+    padding-block: var(--pad-section);
+}
+.section.alt {
+    background: var(--bg-alt);
+}
+
+/* ---------- Buttons (44px+ touch targets everywhere) ---------- */
+.btn {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: clamp(0.9rem, 0.8rem + 0.4vw, 1.0625rem)
+        clamp(1.6rem, 1.2rem + 1.5vw, 2.375rem);
+    min-height: 44px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.25s, color 0.25s;
+}
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+}
+.btn-nav {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 11px 22px;
+    font-size: 0.84375rem;
+}
+.btn-full {
+    width: 100%;
+}
+@media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover {
+        background: var(--accent-dk);
+        color: #fff;
+    }
+    .btn-nav:hover {
+        background: var(--accent-dk);
+        color: #fff;
+    }
+}
+.btn:active {
+    transform: translateY(1px);
+}
+
+/* ---------- Nav ---------- */
+.nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    padding-block: clamp(0.75rem, 2vw, 1.25rem);
+    padding-inline: var(--safe-l) var(--safe-r);
+    transition: background 0.3s, box-shadow 0.3s, padding 0.3s;
+}
+.nav.scrolled {
+    background: rgba(250, 248, 245, 0.96);
+    box-shadow: 0 1px 0 var(--line);
+    padding-block: 0.75rem;
+}
+.nav-inner {
+    max-width: var(--maxw);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+}
+.nav-logo {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+}
+.nav-logo-name {
+    font-family: var(--serif);
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+    color: var(--ink);
+    white-space: nowrap;
+}
+.nav-logo-area {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+    white-space: nowrap;
+}
+.nav:not(.scrolled) .nav-logo-name,
+.nav:not(.scrolled) .nav-logo-area {
+    color: #fff;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+.nav.scrolled .nav-logo-name {
+    color: var(--ink);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2.5vw, 1.875rem);
+}
+.nav-links a {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink);
+}
+.nav:not(.scrolled) .nav-links a:not(.btn-nav) {
+    color: #fff;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+@media (hover: hover) {
+    .nav-links a:hover {
+        color: var(--accent-dk);
+    }
+}
+.nav-phone {
+    font-variant-numeric: tabular-nums;
+}
+
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 44px;
+    height: 44px; /* full touch target */
+    position: relative;
+}
+.nav-toggle span {
+    position: absolute;
+    left: 9px;
+    right: 9px;
+    height: 2px;
+    background: var(--ink);
+    transition: transform 0.3s, top 0.3s;
+}
+.nav:not(.scrolled) .nav-toggle span {
+    background: #fff;
+}
+.nav-toggle span:nth-child(1) {
+    top: 17px;
+}
+.nav-toggle span:nth-child(2) {
+    top: 26px;
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(1) {
+    top: 21px;
+    transform: rotate(45deg);
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(2) {
+    top: 21px;
+    transform: rotate(-45deg);
+}
+
+/* ---------- Hero ---------- */
+.hero {
+    position: relative;
+    /* svh = stable height on mobile — no jump when browser bars collapse.
+     Fallback chain for older browsers. */
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    color: #fff;
+}
+.hero-media,
+.hero-media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(20, 20, 18, 0.38), rgba(20, 20, 18, 0.3));
+}
+.hero-content {
+    position: relative;
+    max-width: 760px;
+    margin-inline: auto;
+    padding: clamp(7rem, 15vh, 9rem) calc(var(--gutter) + var(--safe-l))
+        clamp(4rem, 10vh, 6rem) calc(var(--gutter) + var(--safe-r));
+    width: 100%;
+}
+.hero h1 {
+    color: #fff;
+    margin-bottom: var(--space-m);
+}
+.hero-sub {
+    font-size: clamp(1rem, 0.95rem + 0.35vw, 1.15rem);
+    max-width: 620px;
+    margin-bottom: var(--space-l);
+    color: rgba(255, 255, 255, 0.94);
+}
+.hero-referral {
+    font-size: var(--fs-small);
+    margin-top: var(--space-s);
+    max-width: 520px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* Landscape phones: hero content is tall, screen is short — relax the
+   full-height requirement so nothing gets cut off */
+@media (max-height: 480px) and (orientation: landscape) {
+    .hero {
+        min-height: auto;
+    }
+    .hero-content {
+        padding-block: 6.5rem 3rem;
+    }
+}
+
+/* ---------- Trust bar ---------- */
+.trustbar {
+    background: var(--bg-alt);
+    border-bottom: 1px solid var(--line);
+}
+.trustbar-list {
+    list-style: none;
+    max-width: var(--maxw);
+    margin-inline: auto;
+    padding: var(--space-s) var(--gutter);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.875rem 0;
+}
+.trustbar-list li {
+    font-size: var(--fs-label);
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    color: var(--ink-soft);
+    padding-inline: clamp(0.875rem, 2vw, 1.625rem);
+    border-right: 1px solid var(--line);
+}
+.trustbar-list li:last-child {
+    border-right: none;
+}
+.trustbar-list a {
+    color: var(--accent-dk);
+}
+
+/* ---------- Trust section ---------- */
+.trust h2 {
+    text-align: center;
+    margin-inline: auto;
+}
+.stats {
+    display: grid;
+    /* auto-fit: 3-across on desktop, 2 on tablet, 1 on phone — no
+     breakpoints needed, and it adapts if you add a 4th stat later */
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+    gap: var(--space-m);
+    margin-bottom: var(--space-m);
+}
+.stat-number {
+    font-family: var(--serif);
+    font-size: var(--fs-stat);
+    color: var(--accent-dk);
+    margin-bottom: var(--space-xs);
+    line-height: 1;
+}
+.stat p {
+    font-size: var(--fs-small);
+    color: var(--ink-soft);
+}
+.key-protocol {
+    text-align: center;
+    font-family: var(--serif);
+    font-size: var(--fs-quote);
+    font-style: italic;
+    max-width: 640px;
+    margin: 0 auto; /* was: 0 auto var(--space-l) — bottom gap removed */
+}
+.testimonial {
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-l);
+    max-width: 680px;
+    margin-inline: auto;
+    text-align: center;
+}
+.testimonial blockquote {
+    font-family: var(--serif);
+    font-size: var(--fs-quote);
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: var(--space-s);
+}
+.testimonial p,
+.testimonial blockquote {
+    margin-inline: auto;
+}
+.testimonial figcaption {
+    font-size: var(--fs-small);
+    color: var(--ink-soft);
+}
+
+/* ---------- Steps ---------- */
+#how h2 {
+    text-align: center;
+    margin-inline: auto;
+}
+.steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+    gap: var(--space-m);
+    max-width: 900px;
+    margin-inline: auto;
+}
+.step {
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-m);
+    text-align: center;
+}
+.step-num {
+    font-family: var(--serif);
+    font-size: 2rem;
+    color: var(--accent-dk);
+    margin-bottom: var(--space-s);
+}
+.step p {
+    font-size: var(--fs-small);
+    color: var(--ink-soft);
+    margin-inline: auto;
+}
+
+/* ---------- Team ---------- */
+/* Single-line founder note — much lighter padding than a full section */
+#team.section {
+    padding-block: clamp(1.25rem, 1rem + 1vw, 2rem);
+}
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+    gap: var(--space-m);
+    margin-bottom: var(--space-l);
+}
+.team-card img {
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    width: 100%;
+    margin-bottom: var(--space-xs);
+}
+.team-card figcaption {
+    font-size: var(--fs-small);
+    color: var(--ink-soft);
+}
+.team-card strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+.founder-note {
+    max-width: 680px;
+    color: var(--ink-soft);
+}
+
+/* ---------- Services ---------- */
+.services-pricing {
+    margin: calc(-1 * var(--space-m)) 0 var(--space-l);
+    color: var(--ink-soft);
+}
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: var(--space-m);
+    margin-bottom: var(--space-m);
+}
+.service-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem)
+        clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
+    display: flex;
+    flex-direction: column;
+}
+.service-tag {
+    font-size: var(--fs-label);
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    color: var(--accent-dk);
+    margin-bottom: var(--space-xs);
+}
+.service-card p {
+    font-size: var(--fs-small);
+    color: var(--ink-soft);
+    margin-bottom: var(--space-xs);
+}
+.service-micro {
+    font-size: 0.8125rem;
+    font-style: italic;
+}
+.service-link {
+    margin-top: auto;
+    padding-top: var(--space-s);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+.builder-band {
+    background: var(--ink);
+    color: var(--bg);
+    padding: var(--space-m) clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+}
+.builder-band p {
+    font-family: var(--serif);
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+}
+.builder-band a {
+    color: #c6cfbf;
+    font-size: 0.90625rem;
+    font-weight: 500;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+}
+@media (hover: hover) {
+    .builder-band a:hover {
+        color: #fff;
+    }
+}
+
+/* ---------- Guarantee ---------- */
+.guarantee {
+    text-align: center;
+}
+.guarantee-line {
+    font-family: var(--serif);
+    font-size: var(--fs-guarantee);
+    line-height: 1.35;
+    margin-inline: auto;
+}
+
+/* ---------- Accordion ---------- */
+.accordion details {
+    border-top: 1px solid var(--line);
+}
+.accordion details:last-child {
+    border-bottom: 1px solid var(--line);
+}
+.accordion summary {
+    font-family: var(--serif);
+    font-size: clamp(1.1rem, 1rem + 0.6vw, 1.3rem);
+    padding: var(--space-s) 2.5rem var(--space-s) 0;
+    min-height: 44px;
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+}
+.accordion summary::-webkit-details-marker {
+    display: none;
+}
+.accordion summary::after {
+    content: "+";
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--sans);
+    font-size: 1.4rem;
+    color: var(--accent-dk);
+    transition: transform 0.25s;
+}
+.accordion details[open] summary::after {
+    transform: translateY(-50%) rotate(45deg);
+}
+.accordion details p {
+    padding: 0 0 var(--space-m);
+    font-size: 0.96875rem;
+    color: var(--ink-soft);
+    max-width: 680px;
+}
+.faq-more {
+    margin-top: var(--space-m);
+    font-size: 0.90625rem;
+}
+
+/* ---------- Final CTA ---------- */
+.cta-final {
+    background: var(--ink);
+    color: var(--bg);
+}
+.cta-final h2 {
+    color: var(--bg);
+    margin-bottom: var(--space-m);
+}
+.cta-sub {
+    color: rgba(250, 248, 245, 0.82);
+    max-width: 640px;
+    margin-bottom: var(--space-s);
+    font-size: var(--fs-body);
+}
+.cta-open {
+    font-size: var(--fs-small);
+}
+.quote-form {
+    max-width: 560px;
+    margin: var(--space-m) 0 var(--space-m);
+}
+
+/* Form fields: side-by-side pairs when space allows, stacked when not */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+    gap: var(--space-s);
+    margin-bottom: var(--space-s);
+}
+.form-row label {
+    display: block;
+    font-size: var(--fs-label);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+    color: rgba(250, 248, 245, 0.75);
+}
+.optional {
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.7;
+}
+.form-row input {
+    width: 100%;
+    padding: 15px 16px;
+    min-height: 48px;
+    font-family: var(--sans);
+    font-size: 16px; /* never below 16px — prevents iOS auto-zoom on focus */
+    background: rgba(250, 248, 245, 0.06);
+    border: 1px solid rgba(250, 248, 245, 0.25);
+    border-radius: 0;
+    color: var(--bg);
+    transition: border-color 0.2s;
+}
+.form-row input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+.form-row input.invalid {
+    border-color: #b0705f;
+}
+.form-note {
+    font-size: 0.84375rem;
+    color: rgba(250, 248, 245, 0.65);
+    margin-top: var(--space-xs);
+}
+.form-note a {
+    color: #c6cfbf;
+}
+.form-success {
+    margin-top: var(--space-s);
+    padding: var(--space-s);
+    border: 1px solid var(--accent);
+    color: #c6cfbf;
+    font-size: 0.9375rem;
+}
+.cta-trustline {
+    border-top: 1px solid rgba(250, 248, 245, 0.18);
+    padding-top: var(
+        --space-s
+    ); /* was var(--space-m) — tighter above the footer */
+    font-size: var(--fs-label);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(250, 248, 245, 0.6);
+}
+
+/* ---------- Footer ---------- */
+.footer {
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+    padding-block: var(
+        --space-m
+    ); /* was var(--space-l) — tighter under the CTA */
+    padding-bottom: calc(var(--space-m) + env(safe-area-inset-bottom, 0px));
+}
+.footer-inner p {
+    font-size: 0.84375rem;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+}
+.footer-copy {
+    margin-top: var(--space-s);
+    font-size: 0.75rem;
+}
+
+/* ---------- Reveal animation ---------- */
+.reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* ---------- Adaptive: reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+    html {
+        scroll-behavior: auto;
+    }
+    * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
+
+/* ---------- Mobile nav drawer (the one true breakpoint) ---------- */
+@media (max-width: 900px) {
+    .nav-links {
+        position: fixed;
+        inset: 0 0 0 auto;
+        width: min(320px, 85vw);
+        background: var(--bg);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 100px clamp(1.5rem, 8vw, 2.25rem) 2rem;
+        padding-right: calc(clamp(1.5rem, 8vw, 2.25rem) + var(--safe-r));
+        gap: 1.625rem;
+        transform: translateX(100%);
+        transition: transform 0.35s ease;
+        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.12);
+        overflow-y: auto;
+    }
+    .nav-links.open {
+        transform: translateX(0);
+    }
+    .nav-links a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+    .nav-links a,
+    .nav:not(.scrolled) .nav-links a:not(.btn-nav) {
+        color: var(--ink);
+        text-shadow: none;
+    }
+    .nav-toggle {
+        display: block;
+        z-index: 110;
+    }
+    body.menu-open {
+        overflow: hidden;
+    } /* lock scroll behind open drawer */
+}
+
+/* ---------- Large screens: don't let it get airless OR cavernous ---------- */
+@media (min-width: 1800px) {
+    :root {
+        --maxw: 1320px;
+    }
+}
+
+/* ---------- Print: quote-friendly, ink-friendly ---------- */
+@media print {
+    .nav,
+    .hero-media,
+    .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+    .nav,
+    .builder-band,
+    .quote-form,
+    .footer a {
+        display: none;
+    }
+    body {
+        background: #fff;
+        color: #000;
+    }
+    .cta-final {
+        background: #fff;
+        color: #000;
+    }
+    .cta-final h2,
+    .cta-sub {
+        color: #000;
+    }
+}
