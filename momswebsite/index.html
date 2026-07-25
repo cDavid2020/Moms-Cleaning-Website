@@ -20,15 +20,20 @@
         <span class="nav-logo-name"><strong>Ever Clean LLC</strong></span>
         <span class="nav-logo-area"><strong>Serving Northern Virginia (Fairfax, McLean, Tysons &amp; Vienna)</strong></span>
       </a>
-      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
-        <a href="#services">Services</a>
-        <a href="#questions">Questions</a>
-        <a href="builders.html">For Builders</a>
-        <a href="#quote" class="btn btn-nav">Request Your Quote</a>
-      </nav>
-      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
-        <span></span><span></span>
-      </button>
+      <div class="nav-right">
+        <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+          <a href="#services">Services</a>
+          <a href="#questions">Questions</a>
+          <a href="builders.html">For Builders</a>
+          <a href="#quote" class="btn btn-nav">Request Your Quote</a>
+        </nav>
+        <!-- Logo lives in the site's own images/ folder — relative path,
+             so no external URL (and no GitHub username) appears anywhere -->
+        <img src="images/logo.png" alt="Ever Clean LLC logo" class="nav-corner-logo">
+        <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+          <span></span><span></span>
+        </button>
+      </div>
     </div>
   </header>
 
