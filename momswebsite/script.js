@@ -1,5 +1,5 @@
 /* ==========================================================
-   [Company Name] — adaptive site behavior
+   Ever Clean LLC, Northern Virginia house cleaning service — adaptive site behavior
    Sticky nav · mobile drawer · scroll reveal · form · resize
    ========================================================== */
 
@@ -68,17 +68,18 @@
     reveals.forEach((el) => io.observe(el));
   }
 
-  /* ---------- Quote form ---------- */
-  // NOTE: Validates and shows success locally. To RECEIVE submissions,
-  // connect a backend (Formspree, Netlify Forms, or your own endpoint)
-  // in the marked block below. Do not launch without this — a premium
-  // site whose form goes nowhere breaks the brand before the first clean.
+  /* ---------- Quote form → Google Sheets ---------- */
+  // Submissions are sent to the Google Apps Script Web App URL in the
+  // form's action attribute (set in index.html). The script appends a
+  // row to the Google Sheet: Timestamp | Name | Contact | ZIP | Referral.
   const form = document.getElementById("quoteForm");
   const success = document.getElementById("formSuccess");
+  const submitBtn = form.querySelector('button[type="submit"]');
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
+    // Validate required fields (form has novalidate)
     let firstInvalid = null;
     form.querySelectorAll("input[required]").forEach((input) => {
       const empty = input.value.trim() === "";
@@ -90,16 +91,33 @@
       return;
     }
 
-    /* --- Replace this block with a real submission, e.g.:
-       fetch("https://formspree.io/f/yourFormId", {
-         method: "POST",
-         body: new FormData(form),
-         headers: { Accept: "application/json" },
-       }).then(() => { show success });
-    --- */
-    form.querySelectorAll("input, button").forEach((el) => (el.disabled = true));
-    success.hidden = false;
-    success.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "nearest" });
+    // Prevent double-submits while sending
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending…";
+
+    fetch(form.action, {
+      method: "POST",
+      mode: "no-cors", // Apps Script doesn't send CORS headers; opaque response is fine
+      body: new FormData(form),
+    })
+      .then(() => {
+        // Success: lock the form and show the confirmation message
+        form.querySelectorAll("input, button").forEach((el) => (el.disabled = true));
+        submitBtn.textContent = "Request Sent ✓";
+        success.hidden = false;
+        success.scrollIntoView({
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+          block: "nearest",
+        });
+      })
+      .catch(() => {
+        // Network failed: let them try again, point to the email fallback
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Request Your Quote";
+        alert(
+          "Something went wrong sending your request. Please try again, or email us at ever.clean.nova@gmail.com"
+        );
+      });
   });
 
   form.querySelectorAll("input").forEach((input) =>
