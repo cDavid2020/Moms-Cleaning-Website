@@ -260,6 +260,22 @@ p {
     color: var(--ink);
 }
 
+/* Right-side group: links + corner logo + mobile toggle sit together
+   in the top-right corner and share consistent spacing */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2.5vw, 1.875rem);
+}
+
+/* Corner logo — sized to the nav bar. Served from the site's own
+   images/ folder via a relative path. */
+.nav-corner-logo {
+    height: clamp(36px, 4vw, 48px);
+    width: auto;
+    flex-shrink: 0;
+}
+
 .nav-links {
     display: flex;
     align-items: center;
@@ -871,6 +887,15 @@ p {
     body.menu-open {
         overflow: hidden;
     } /* lock scroll behind open drawer */
+
+    /* On phones the corner logo shares the corner with the hamburger;
+       pull the gap in and cap the size so the two never crowd */
+    .nav-right {
+        gap: 0.5rem;
+    }
+    .nav-corner-logo {
+        height: 34px;
+    }
 }
 
 /* ---------- Large screens: don't let it get airless OR cavernous ---------- */
